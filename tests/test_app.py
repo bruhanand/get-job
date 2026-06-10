@@ -123,8 +123,9 @@ FIXTURES = {
         "links": {"next": None}, "meta": {"current_page": 1, "last_page": 1},
     },
     "workingnomads.com/api/exposed_jobs": [
+        # Captured live responses carry NO "id" field — url is the stable key.
         {
-            "id": 777, "url": "https://www.workingnomads.com/jobs?job=777",
+            "url": "https://www.workingnomads.com/jobs?job=777",
             "title": "Site Reliability Engineer", "company_name": "Wayne Cloud",
             "description": "Terraform, AWS, on-call rotation.",
             "category_name": "Development", "tags": "aws,terraform,sre",
@@ -180,6 +181,7 @@ def test_fetchers():
 
     jobs = scraper.fetch_workingnomads()
     check("workingnomads tag string split", jobs[0]["tags"][:3] == ["aws", "terraform", "sre"])
+    check("workingnomads id-less rows keyed by url", jobs[0]["external_id"] == "https://www.workingnomads.com/jobs?job=777")
 
     jobs = scraper.fetch_hackernews()
     check("hn company parsed", jobs[0]["company"] == "WidgetCo")
