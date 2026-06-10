@@ -1,0 +1,37 @@
+Anand Kumar
+Full-Stack Software Engineer · AI Integration
+Delhi NCR · Remote / Bangalore · Hyderabad · Gurugram
+
+PROFESSIONAL SUMMARY
+Full-stack software engineer who ships products end-to-end — mobile, web, backend, and AI-agentic workflows. Two years at HCLTech delivering production C/Embedded C in a large multi-team SDLC, now building AI-integrated apps independently: a closed-loop patient-care app with an LLM planning agent, a B2B CRM with hierarchical demand forecasting, and a tested agentic-AI pipeline. Owns features from data model to deployment, with a bias for tested, well-architected code.
+
+CORE COMPETENCIES
+Full-Stack Development, AI / LLM Integration, React & Next.js, React Native (Expo), Django REST APIs, PostgreSQL & Redis, System Design, CI & Automated Testing
+
+WORK EXPERIENCE
+Freelance / Independent — Software Engineer, Full-Stack / AI (Apr 2026 – Present, Remote)
+Built Nishkriti, a closed-loop patient-care app (React Native / Expo, iOS + Android) for a private clinic — three roles (patient / doctor / admin) from one codebase on Supabase Postgres.
+Designed an AI Plan Agent (Supabase Deno edge function) that drafts each patient's daily care plan, triggered by a Postgres AFTER INSERT, producing zod-validated structured JSON from Claude (prompt-cached) and gated by a doctor approval queue so no AI output reaches a patient unreviewed.
+Delivered a B2B Lead CRM with hierarchical demand forecasting (Django REST + React + PostgreSQL + Redis): SARIMA/Prophet models reconciled down a State → Dealer → Location hierarchy, scored with MAPE and engineered to run within a 1-vCPU budget; RBAC, audit trail, bulk import/export, Dockerized with CI.
+Built Armal News, a Next.js + Drizzle/Postgres monorepo for an agentic AI-news pipeline (ingest → review → publish) with Zod validation, markdown sanitization, OG-image generation, and 12 CI test suites.
+
+HCLTech — Graduate Engineer Trainee (Mar 2024 – Mar 2026, Noida)
+Shipped camera UI features in C / Embedded C for the Chroma camera stack, contributing to a large multi-team product within a structured SDLC.
+Worked the full lifecycle: Gerrit code review, Jenkins CI, system-level debugging, and technical documentation for knowledge transfer.
+Diagnosed and resolved camera-UI defects to improve product stability; collaborated cross-team to turn requirements into delivered, on-time features.
+
+PROJECTS
+Nishkriti — AI-assisted patient-care loop: Check-in → LLM plan agent → doctor approval → live plan. Postgres triggers, edge functions, OTP auth, push/SMS/WhatsApp notifications. React Native · Expo · Supabase · Claude
+Lead CRM Platform — hierarchical demand forecasting: SARIMA + Prophet forecasting across a State → Dealer → Location hierarchy with MAPE, RBAC, audit trail, bulk Excel/CSV I/O — on a 1-vCPU budget. Django REST · React · PostgreSQL · Redis
+Armal News — agentic AI-news pipeline: TypeScript monorepo; AI agent drafts stories → admin review → SSR reader feed. ADR-driven, tested. Next.js · Drizzle ORM · PostgreSQL
+manage-one — macOS local-first personal OS: Native work/habits/journal/goals app with LLM JSON ingest and WhatsApp dispatch; domain-driven design, 62 tests. Swift · SwiftUI
+
+EDUCATION
+B.Tech, Electronics & Instrumentation Engineering — Vellore Institute of Technology (VIT), Jul 2019 – May 2023, CGPA 7.58 / 10, Vellore, India
+
+SKILLS
+Languages: TypeScript, JavaScript, Python, C, C++, Embedded C, Swift, SQL, Java
+Frontend: React, Next.js (App Router), React Native (Expo), Tailwind CSS, Vite, recharts
+Backend: Django REST Framework, Node.js, Supabase Edge Functions (Deno), REST API design
+Data & AI: PostgreSQL, Redis, Prisma, Drizzle ORM, LLM integration (Claude), agentic workflows, zod-validated output, SARIMA/Prophet forecasting
+DevOps & Tooling: Docker, GitHub Actions CI, Jenkins, Git/Gerrit, Vitest

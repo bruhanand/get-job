@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>get-job · remote job scraper &amp; tracker</title>
+  <script src="/static/vendor/tailwind.js"></script>
+  <script src="/static/vendor/chart.umd.js"></script>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen antialiased">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-4 py-3 flex flex-wrap items-center gap-3">
+      <div class="flex items-center gap-2 mr-4">
+        <span class="text-2xl">🛰️</span>
+        <h1 class="text-lg font-bold tracking-tight text-white">get<span class="text-indigo-400">-job</span></h1>
+      </div>
+      <nav id="tabs" class="flex gap-1 overflow-x-auto">
+        <button data-tab="scraper" class="tab-btn">🔎 Scraper</button>
+        <button data-tab="tracker" class="tab-btn">📋 Tracker</button>
+        <button data-tab="profile" class="tab-btn">👤 Profile</button>
+        <button data-tab="analytics" class="tab-btn">📊 Analytics</button>
+      </nav>
+      <div class="ml-auto flex items-center gap-2">
+        <span id="job-count-pill" class="hidden sm:inline-block text-xs text-slate-400 border border-slate-800 rounded-full px-3 py-1"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-6">
+
+    <!-- ============================== SCRAPER ============================== -->
+    <section data-panel="scraper">
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Remote Job Feed</h2>
+          <p class="text-sm text-slate-400">Aggregated from public, keyless feeds — no paid APIs.</p>
+        </div>
+        <button id="scrape-btn"
+                class="ml-auto inline-flex items-center gap-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-950 transition">
+          <svg id="scrape-spinner" class="hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+          </svg>
+          <span id="scrape-label">⚡ Scrape Now</span>
+        </button>
+      </div>
+
+      <div id="source-chips" class="flex flex-wrap gap-2 mb-4"></div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+        <input id="search-input" type="search" placeholder="Search title or company…"
+               class="field sm:col-span-2">
+        <select id="date-filter" class="field">
+          <option value="all">Posted: any time</option>
+          <option value="today">Posted: last 24h</option>
+          <option value="3d">Posted: last 3 days</option>
+          <option value="7d">Posted: last week</option>
+          <option value="30d">Posted: last month</option>
+        </select>
+        <div class="grid grid-cols-2 gap-3">
+          <select id="source-filter" class="field"><option value="">All sources</option></select>
+          <select id="sort-select" class="field">
+            <option value="match">Best match</option>
+            <option value="date">Newest</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="jobs-list" class="space-y-3"></div>
+      <div id="jobs-empty" class="hidden text-center py-16 text-slate-500">
+        <div class="text-4xl mb-3">🗂️</div>
+        <p class="font-medium">No jobs here yet.</p>
+        <p class="text-sm mt-1">Hit <span class="text-indigo-400 font-semibold">Scrape Now</span> to pull fresh remote listings.</p>
+      </div>
+    </section>
+
+    <!-- ============================== TRACKER ============================== -->
+    <section data-panel="tracker" class="hidden">
+      <div class="flex flex-wrap items-center gap-3 mb-5">
+        <div>
+          <h2 class="text-xl font-semibold text-white">Application Tracker</h2>
+          <p class="text-sm text-slate-400">Drag cards between columns, or use the status dropdown on each card.</p>
+        </div>
+        <button id="add-job-btn"
+                class="ml-auto inline-flex items-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-950 transition">
+          ＋ Add Job
+        </button>
+      </div>
+      <div id="kanban" class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4"></div>
+    </section>
+
+    <!-- ============================== PROFILE ============================== -->
+    <section data-panel="profile" class="hidden">
+      <div class="max-w-3xl">
+        <h2 class="text-xl font-semibold text-white mb-1">Your Profile</h2>
+        <p class="text-sm text-slate-400 mb-5">
+          Paste your resume text and key skills. Every scraped job gets a
+          <span class="text-indigo-400 font-medium">Match&nbsp;Score</span> from a pure-Python,
+          IDF-weighted keyword overlap between your profile and the job post — no external AI APIs.
+        </p>
+
+        <label class="block text-sm font-medium text-slate-300 mb-1" for="resume-text">Resume / experience text</label>
+        <textarea id="resume-text" rows="16" class="field w-full font-mono text-xs leading-relaxed"
+                  placeholder="Paste your raw resume text here…"></textarea>
+
+        <label class="block text-sm font-medium text-slate-300 mt-4 mb-1" for="skills-text">
+          Core skill keywords <span class="text-slate-500 font-normal">(comma-separated — these count double)</span>
+        </label>
+        <input id="skills-text" type="text" class="field w-full"
+               placeholder="react, next.js, django, postgresql, typescript…">
+
+        <div class="mt-4 flex items-center gap-3">
+          <button id="save-profile-btn"
+                  class="rounded-lg bg-indigo-600 hover:bg-indigo-500 px-5 py-2 text-sm font-semibold text-white transition">
+            Save Profile
+          </button>
+          <span id="profile-meta" class="text-xs text-slate-500"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== ANALYTICS ============================== -->
+    <section data-panel="analytics" class="hidden">
+      <h2 class="text-xl font-semibold text-white mb-5">Application Analytics</h2>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stat-card"><p class="stat-label">Tracked jobs</p><p id="stat-total" class="stat-value text-white">0</p></div>
+        <div class="stat-card"><p class="stat-label">Applications sent</p><p id="stat-sent" class="stat-value text-indigo-400">0</p></div>
+        <div class="stat-card"><p class="stat-label">Interview conversion</p><p id="stat-conversion" class="stat-value text-emerald-400">0%</p></div>
+        <div class="stat-card"><p class="stat-label">Offer rate</p><p id="stat-offers" class="stat-value text-amber-400">0%</p></div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        <div class="lg:col-span-3 rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <h3 class="text-sm font-semibold text-slate-300 mb-3">Applications over time</h3>
+          <div class="h-72"><canvas id="chart-timeline"></canvas></div>
+        </div>
+        <div class="lg:col-span-2 rounded-xl border border-slate-800 bg-slate-900 p-4">
+          <h3 class="text-sm font-semibold text-slate-300 mb-3">Pipeline by status</h3>
+          <div class="h-72"><canvas id="chart-status"></canvas></div>
+        </div>
+      </div>
+      <div id="analytics-empty" class="hidden text-center py-10 text-slate-500 text-sm">
+        Track a few applications and this page comes alive. 📈
+      </div>
+    </section>
+  </main>
+
+  <footer class="mx-auto max-w-7xl px-4 pb-8 pt-2 text-xs text-slate-600">
+    Listings courtesy of
+    <a class="src-link" href="https://remoteok.com" target="_blank" rel="noopener">Remote OK</a>,
+    <a class="src-link" href="https://weworkremotely.com" target="_blank" rel="noopener">We Work Remotely</a>,
+    <a class="src-link" href="https://remotive.com" target="_blank" rel="noopener">Remotive</a>,
+    <a class="src-link" href="https://jobicy.com" target="_blank" rel="noopener">Jobicy</a>,
+    <a class="src-link" href="https://himalayas.app" target="_blank" rel="noopener">Himalayas</a>,
+    <a class="src-link" href="https://www.arbeitnow.com" target="_blank" rel="noopener">Arbeitnow</a>,
+    <a class="src-link" href="https://www.workingnomads.com" target="_blank" rel="noopener">Working Nomads</a> and
+    <a class="src-link" href="https://news.ycombinator.com/jobs" target="_blank" rel="noopener">Hacker News</a>
+    — follow each job's link to apply on the original site.
+  </footer>
+
+  <!-- Job detail modal -->
+  <div id="job-modal" class="modal hidden">
+    <div class="modal-box max-w-3xl">
+      <div class="flex items-start gap-3 mb-1">
+        <h3 id="jm-title" class="text-lg font-bold text-white flex-1"></h3>
+        <button class="modal-close text-slate-500 hover:text-white text-2xl leading-none" data-close="job-modal">×</button>
+      </div>
+      <p id="jm-meta" class="text-sm text-slate-400 mb-3"></p>
+      <div id="jm-badges" class="flex flex-wrap gap-1.5 mb-4"></div>
+      <div id="jm-desc" class="text-sm text-slate-300 leading-relaxed max-h-80 overflow-y-auto whitespace-pre-wrap border-t border-slate-800 pt-4"></div>
+      <div class="mt-5 flex flex-wrap gap-2">
+        <button id="jm-track" class="rounded-lg bg-emerald-600 hover:bg-emerald-500 px-4 py-2 text-sm font-semibold text-white">📌 Track This Job</button>
+        <a id="jm-link" href="#" target="_blank" rel="noopener" class="rounded-lg border border-slate-700 hover:border-indigo-500 px-4 py-2 text-sm font-medium text-slate-300">Open original ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add / edit tracked job modal -->
+  <div id="tracked-modal" class="modal hidden">
+    <div class="modal-box max-w-xl">
+      <div class="flex items-start gap-3 mb-4">
+        <h3 id="tm-heading" class="text-lg font-bold text-white flex-1">Add Job</h3>
+        <button class="modal-close text-slate-500 hover:text-white text-2xl leading-none" data-close="tracked-modal">×</button>
+      </div>
+      <form id="tracked-form" class="space-y-3">
+        <input type="hidden" id="tm-id">
+        <div>
+          <label class="tm-label" for="tm-title">Job title *</label>
+          <input id="tm-title" required class="field w-full" placeholder="Senior Full-Stack Engineer">
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="tm-label" for="tm-company">Company</label>
+            <input id="tm-company" class="field w-full" placeholder="Acme Corp"></div>
+          <div><label class="tm-label" for="tm-salary">Salary range</label>
+            <input id="tm-salary" class="field w-full" placeholder="$120k – $150k"></div>
+        </div>
+        <div>
+          <label class="tm-label" for="tm-url">Job URL</label>
+          <input id="tm-url" type="url" class="field w-full" placeholder="https://…">
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div><label class="tm-label" for="tm-status">Status</label>
+            <select id="tm-status" class="field w-full"></select></div>
+          <div><label class="tm-label" for="tm-date">Date applied</label>
+            <input id="tm-date" type="date" class="field w-full"></div>
+        </div>
+        <div>
+          <label class="tm-label" for="tm-notes">Notes</label>
+          <textarea id="tm-notes" rows="3" class="field w-full" placeholder="Referral, recruiter name, prep notes…"></textarea>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="submit" class="rounded-lg bg-indigo-600 hover:bg-indigo-500 px-5 py-2 text-sm font-semibold text-white">Save</button>
+          <button type="button" data-close="tracked-modal" class="rounded-lg border border-slate-700 px-5 py-2 text-sm text-slate-300 hover:border-slate-500">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toasts" class="fixed bottom-4 right-4 z-50 space-y-2 w-80 max-w-[calc(100vw-2rem)]"></div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

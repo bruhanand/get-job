@@ -1,0 +1,77 @@
+/* Hand-rolled component classes layered on top of Tailwind utilities. */
+
+.tab-btn {
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.tab-btn:hover { color: #e2e8f0; background: #1e293b; }
+.tab-btn.active { color: #fff; background: #4f46e5; }
+
+.field {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #e2e8f0;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field:focus { border-color: #6366f1; }
+.field::placeholder { color: #475569; }
+
+.stat-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+.stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
+.stat-value { font-size: 1.75rem; font-weight: 700; margin-top: 0.25rem; }
+
+.modal {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(2px);
+  padding: 1rem;
+}
+.modal.hidden { display: none; }
+.modal-box {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+}
+
+.tm-label { display: block; font-size: 0.78rem; font-weight: 500; color: #94a3b8; margin-bottom: 0.25rem; }
+.src-link { color: #64748b; text-decoration: underline; text-underline-offset: 2px; }
+.src-link:hover { color: #818cf8; }
+
+/* Kanban */
+.kanban-col { border-radius: 0.75rem; border: 1px solid #1e293b; background: #0b1120; display: flex; flex-direction: column; min-height: 14rem; }
+.kanban-col .col-body { flex: 1; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.6rem; min-height: 6rem; }
+.kanban-col.drag-over { border-color: #6366f1; background: #11183a; }
+.kanban-card { cursor: grab; }
+.kanban-card.dragging { opacity: 0.45; cursor: grabbing; }
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+.toast { animation: toast-in 0.25s ease-out; }
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
